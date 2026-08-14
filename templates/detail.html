@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}{{ character.name }} | Grand Line Wanted{% endblock %}
+{% block content %}
+  <section class="detail-shell">
+    <a class="back" href="{{ url_for('index') }}">← Voltar ao catálogo</a>
+    <div class="detail-card">
+      <div class="detail-symbol">{{ character.symbol }}</div>
+      <div>
+        <span class="eyebrow">ARQUIVO CONFIDENCIAL</span>
+        <p class="detail-epithet">“{{ character.epithet }}”</p>
+        <h1>{{ character.name }}</h1>
+        <p class="description">{{ character.description }}</p>
+        <dl>
+          <div><dt>Tripulação</dt><dd>{{ character.crew }}</dd></div>
+          <div><dt>Função</dt><dd>{{ character.role }}</dd></div>
+          <div><dt>Origem</dt><dd>{{ character.origin }}</dd></div>
+          <div class="reward"><dt>Recompensa</dt><dd>฿ {{ character.bounty|berries }}</dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+{% endblock %}

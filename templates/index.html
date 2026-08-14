@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+  <section class="hero">
+    <span class="eyebrow">BANCO DE DADOS DA MARINHA</span>
+    <h1>Os nomes mais procurados dos mares</h1>
+    <p>Pesquise piratas, explore tripulações e compare as maiores recompensas da Grand Line.</p>
+  </section>
+
+  <section class="catalog">
+    <form class="filters" method="get">
+      <label>
+        <span>Buscar personagem</span>
+        <input name="q" value="{{ query }}" placeholder="Ex.: Luffy ou Soul King">
+      </label>
+      <label>
+        <span>Tripulação</span>
+        <select name="crew">
+          <option value="">Todas as tripulações</option>
+          {% for crew in crews %}
+            <option value="{{ crew }}" {% if crew == selected_crew %}selected{% endif %}>{{ crew }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <button type="submit">Procurar</button>
+      {% if query or selected_crew %}<a class="clear" href="{{ url_for('index') }}">Limpar</a>{% endif %}
+    </form>
+
+    <div class="results-heading">
+      <h2>Cartazes encontrados</h2>
+      <span>{{ characters|length }} resultado{% if characters|length != 1 %}s{% endif %}</span>
+    </div>
+
+    <div class="grid">
+      {% for character in characters %}
+        <article class="wanted-card">
+          <div class="card-top"><span>WANTED</span><small>DEAD OR ALIVE</small></div>
+          <div class="portrait" aria-hidden="true">{{ character.symbol }}</div>
+          <div class="card-copy">
+            <p class="epithet">“{{ character.epithet }}”</p>
+            <h3>{{ character.name }}</h3>
+            <p class="crew">{{ character.crew }}</p>
+            <p class="bounty"><span>฿</span> {{ character.bounty|berries }}</p>
+            <a href="{{ url_for('character_detail', slug=character.slug) }}">Ver ficha completa →</a>
+          </div>
+        </article>
+      {% else %}
+        <div class="empty"><span>🌊</span><h3>Nenhum cartaz encontrado</h3><p>Tente outro nome ou remova o filtro de tripulação.</p></div>
+      {% endfor %}
+    </div>
+  </section>
+{% endblock %}
