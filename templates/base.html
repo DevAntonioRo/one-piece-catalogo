@@ -1,23 +1,25 @@
 <!doctype html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Catálogo de personagens e recompensas do universo de One Piece.">
-    <title>{% block title %}Grand Line Wanted{% endblock %}</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Rye&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-  </head>
-  <body>
-    <header class="site-header">
-      <a class="brand" href="{{ url_for('index') }}">
-        <span class="brand-mark">☠</span>
-        <span>Grand Line Wanted</span>
-      </a>
-    </header>
-    <main>{% block content %}{% endblock %}</main>
-    <footer>Projeto de fã, sem fins comerciais. Personagens pertencem aos seus respectivos criadores.</footer>
-  </body>
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Wiki interativa e RPG tático inspirado no universo de One Piece.">
+  <title>{% block title %}Grand Line Archives{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Rye&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="{{ url_for('index') }}"><span class="brand-mark">☠</span><span>Grand Line Archives</span></a>
+    <nav>
+      <a href="{{ url_for('index') }}">Personagens</a><a href="{{ url_for('crews') }}">Tripulações</a>
+      <a class="nav-game" href="{{ url_for('tower') if tower_state else url_for('team_builder') }}">⚔ Grand Line Tower</a>
+    </nav>
+  </header>
+  {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}
+    <div class="flash-stack">{% for category,message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}</div>
+  {% endif %}{% endwith %}
+  <main>{% block content %}{% endblock %}</main>
+  <footer><strong>Grand Line Archives</strong><span>Projeto educacional de fã, sem fins comerciais. Dados de jogo são não oficiais.</span></footer>
+</body>
 </html>

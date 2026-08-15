@@ -1,51 +1,30 @@
 {% extends "base.html" %}
 {% block content %}
-  <section class="hero">
-    <span class="eyebrow">BANCO DE DADOS DA MARINHA</span>
-    <h1>Os nomes mais procurados dos mares</h1>
-    <p>Pesquise piratas, explore tripulações e compare as maiores recompensas da Grand Line.</p>
-  </section>
-
-  <section class="catalog">
-    <form class="filters" method="get">
-      <label>
-        <span>Buscar personagem</span>
-        <input name="q" value="{{ query }}" placeholder="Ex.: Luffy ou Soul King">
-      </label>
-      <label>
-        <span>Tripulação</span>
-        <select name="crew">
-          <option value="">Todas as tripulações</option>
-          {% for crew in crews %}
-            <option value="{{ crew }}" {% if crew == selected_crew %}selected{% endif %}>{{ crew }}</option>
-          {% endfor %}
-        </select>
-      </label>
-      <button type="submit">Procurar</button>
-      {% if query or selected_crew %}<a class="clear" href="{{ url_for('index') }}">Limpar</a>{% endif %}
-    </form>
-
-    <div class="results-heading">
-      <h2>Cartazes encontrados</h2>
-      <span>{{ characters|length }} resultado{% if characters|length != 1 %}s{% endif %}</span>
-    </div>
-
-    <div class="grid">
-      {% for character in characters %}
-        <article class="wanted-card">
-          <div class="card-top"><span>WANTED</span><small>DEAD OR ALIVE</small></div>
-          <div class="portrait" aria-hidden="true">{{ character.symbol }}</div>
-          <div class="card-copy">
-            <p class="epithet">“{{ character.epithet }}”</p>
-            <h3>{{ character.name }}</h3>
-            <p class="crew">{{ character.crew }}</p>
-            <p class="bounty"><span>฿</span> {{ character.bounty|berries }}</p>
-            <a href="{{ url_for('character_detail', slug=character.slug) }}">Ver ficha completa →</a>
-          </div>
-        </article>
-      {% else %}
-        <div class="empty"><span>🌊</span><h3>Nenhum cartaz encontrado</h3><p>Tente outro nome ou remova o filtro de tripulação.</p></div>
-      {% endfor %}
-    </div>
-  </section>
+<section class="hero wiki-hero">
+  <span class="eyebrow">ARQUIVOS DO NOVO MUNDO</span><h1>Conhecimento também vence batalhas.</h1>
+  <p>Explore personagens, poderes e tripulações. Depois use o que aprendeu para superar uma torre tática em que cada regra do mundo importa.</p>
+  <div class="hero-actions"><a class="button gold" href="{{ url_for('team_builder') }}">Montar minha equipe</a><a class="button ghost" href="#catalogo">Explorar a wiki</a></div>
+</section>
+<section class="feature-strip">
+  <div><b>12</b><span>personagens</span></div><div><b>5</b><span>tripulações</span></div><div><b>4</b><span>andares táticos</span></div><div><b>∞</b><span>estratégias</span></div>
+</section>
+<section class="catalog" id="catalogo">
+  <div class="section-intro"><span class="eyebrow dark">ENCICLOPÉDIA</span><h2>Cartazes e arquivos</h2><p>Informações da wiki alimentam diretamente as regras do minigame.</p></div>
+  <form class="filters" method="get">
+    <label><span>Buscar personagem</span><input name="q" value="{{ query }}" placeholder="Nome ou alcunha"></label>
+    <label><span>Tripulação</span><select name="crew"><option value="">Todas</option>{% for crew in crews %}<option value="{{ crew }}" {% if crew==selected_crew %}selected{% endif %}>{{ crew }}</option>{% endfor %}</select></label>
+    <button type="submit">Pesquisar</button>{% if query or selected_crew %}<a class="clear" href="{{ url_for('index') }}">Limpar</a>{% endif %}
+  </form>
+  <div class="results-heading"><h2>Registros encontrados</h2><span>{{ characters|length }} resultado{% if characters|length != 1 %}s{% endif %}</span></div>
+  <div class="grid">
+  {% for character in characters %}
+    <article class="wanted-card">
+      <div class="card-top"><span>WANTED</span><small>DEAD OR ALIVE</small></div><div class="portrait">{{ character.symbol }}</div>
+      <div class="card-copy"><p class="epithet">“{{ character.epithet }}”</p><h3>{{ character.name }}</h3><p class="crew">{{ character.crew }}</p>
+      <div class="mini-tags">{% if character.fruit_type %}<span>{{ character.fruit_type|replace('_',' ')|title }}</span>{% endif %}{% if character.haki %}<span>{{ character.haki|length }} Haki</span>{% endif %}</div>
+      <p class="bounty"><span>฿</span> {{ character.bounty|berries }}</p><a href="{{ url_for('character_detail', slug=character.slug) }}">Abrir arquivo →</a></div>
+    </article>
+  {% else %}<div class="empty"><span>🌊</span><h3>Nenhum registro encontrado</h3></div>{% endfor %}
+  </div>
+</section>
 {% endblock %}
