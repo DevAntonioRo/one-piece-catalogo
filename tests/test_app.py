@@ -40,15 +40,16 @@ class CatalogTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"Rob Lucci", response.data)
         response = self.client.post("/jogo/batalha", data={
-            "fighter": "brook", "approach": "feint", "intensity": "quick",
-            "body_part": "torso", "stance": "guarded", "element": "",
+            "skill_nami": "thunderbolt", "approach_nami": "feint", "body_nami": "torso", "stance_nami": "guarded",
+            "skill_brook": "soul_freeze", "approach_brook": "direct", "body_brook": "legs", "stance_brook": "guarded",
+            "skill_nico-robin": "clutch", "approach_nico-robin": "direct", "body_nico-robin": "arms", "stance_nico-robin": "guarded",
         })
         self.assertEqual(response.status_code, 200)
         self.assertIn("DIÁRIO DE COMBATE".encode(), response.data)
 
     def test_api(self):
         payload = self.client.get("/api/personagens").get_json()
-        self.assertEqual(payload["count"], 12)
+        self.assertEqual(payload["count"], 33)
 
 
 if __name__ == "__main__":

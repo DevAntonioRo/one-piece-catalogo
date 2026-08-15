@@ -6,7 +6,7 @@
   <div class="hero-actions"><a class="button gold" href="{{ url_for('team_builder') }}">Montar minha equipe</a><a class="button ghost" href="#catalogo">Explorar a wiki</a></div>
 </section>
 <section class="feature-strip">
-  <div><b>12</b><span>personagens</span></div><div><b>5</b><span>tripulações</span></div><div><b>4</b><span>andares táticos</span></div><div><b>∞</b><span>estratégias</span></div>
+  <div><b>33</b><span>personagens</span></div><div><b>15+</b><span>facções</span></div><div><b>5</b><span>andares táticos</span></div><div><b>∞</b><span>estratégias</span></div>
 </section>
 <section class="catalog" id="catalogo">
   <div class="section-intro"><span class="eyebrow dark">ENCICLOPÉDIA</span><h2>Cartazes e arquivos</h2><p>Informações da wiki alimentam diretamente as regras do minigame.</p></div>
@@ -21,7 +21,7 @@
     <article class="wanted-card">
       <div class="card-top"><span>WANTED</span><small>DEAD OR ALIVE</small></div><div class="portrait">{{ character.symbol }}</div>
       <div class="card-copy"><p class="epithet">“{{ character.epithet }}”</p><h3>{{ character.name }}</h3><p class="crew">{{ character.crew }}</p>
-      <div class="mini-tags">{% if character.fruit_type %}<span>{{ character.fruit_type|replace('_',' ')|title }}</span>{% endif %}{% if character.haki %}<span>{{ character.haki|length }} Haki</span>{% endif %}</div>
+      <div class="mini-tags"><span>{{ character.archetype }}</span>{% if character.fruit_type %}<span>{{ character.fruit_type|replace('_',' ')|title }}</span>{% endif %}{% if not character.playable %}<span>Chefe</span>{% endif %}</div>
       <p class="bounty"><span>฿</span> {{ character.bounty|berries }}</p><a href="{{ url_for('character_detail', slug=character.slug) }}">Abrir arquivo →</a></div>
     </article>
   {% else %}<div class="empty"><span>🌊</span><h3>Nenhum registro encontrado</h3></div>{% endfor %}

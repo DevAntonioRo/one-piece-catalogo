@@ -8,7 +8,7 @@ Wiki interativa inspirada no universo de **One Piece**, integrada ao minigame t�
 
 ### Wiki
 
-- 12 arquivos de personagens
+- 33 arquivos de personagens, incluindo 30 do elenco solicitado
 - Busca por nome ou alcunha
 - Filtro e página de tripulações
 - Akuma no Mi, tipo, Haki, origem e recompensa
@@ -16,9 +16,9 @@ Wiki interativa inspirada no universo de **One Piece**, integrada ao minigame t�
 
 ### Grand Line Tower
 
-- Formação de equipe com exatamente três personagens
-- Orçamento limitado a 3.200 créditos
-- Quatro desafios com dificuldade crescente
+- Formação de equipe com exatamente três personagens e 25 opções recrutáveis
+- Orçamento limitado a 4.200 créditos
+- Cinco desafios com dificuldade crescente e Barba Negra como chefe final
 - Vida e energia persistentes entre andares
 - Recompensas em berries e loja de melhorias
 - Recursos táticos limitados: água e Kairouseki
@@ -26,18 +26,22 @@ Wiki interativa inspirada no universo de **One Piece**, integrada ao minigame t�
 
 ### Motor tático
 
-O jogador constrói uma ação escolhendo combatente, aproximação, intensidade, região do alvo, postura, recurso e uso de Haki. O motor considera:
+O jogador planeja uma ação separada para cada integrante. Todas as ordens entram em uma linha temporal junto com o inimigo e são resolvidas por velocidade. Personagens rápidos acumulam iniciativa e podem agir novamente antes de combatentes lentos. O motor considera:
 
 - intangibilidade de Logias;
 - Haki do Armamento;
 - fraquezas elementais;
 - precisão, velocidade, força, técnica e defesa;
+- crítico calculado a partir da técnica;
+- ações extras por iniciativa acumulada;
 - custo de energia;
+- cooldown de habilidades;
 - postura defensiva ou agressiva;
 - atordoamento, enfraquecimento e redução de velocidade;
-- decisões reativas dos inimigos.
+- imunidades por tipo de dano, como Buggy contra cortes;
+- passivas, cura, controle e sinergias de facção.
 
-Exemplo: um ataque físico comum de Zoro causa zero de dano em Crocodile. O mesmo ataque pode atingir o corpo real se estiver imbuído com Haki do Armamento ou se Crocodile tiver sido materializado com água.
+Exemplos: um ataque comum de Zoro causa zero de dano em Crocodile sem Haki; qualquer corte causa zero de dano em Buggy; ROOM ignora a defesa; Vórtice Sombrio bloqueia habilidades; e Gear 5 fortalece Luffy em situação crítica.
 
 ## Estrutura
 
