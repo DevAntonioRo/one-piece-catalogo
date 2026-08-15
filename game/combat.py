@@ -1,16 +1,13 @@
 from dataclasses import dataclass
 from random import Random
 
-INTENSITY = {
-    "quick": {"damage": .72, "energy": 24, "accuracy": .96},
-    "balanced": {"damage": 1.0, "energy": 42, "accuracy": .86},
-    "heavy": {"damage": 1.38, "energy": 68, "accuracy": .68},
-}
+from data import get_skill
+
 BODY_PARTS = {
-    "head": {"damage": 1.35, "accuracy": .72, "effect": "stunned"},
+    "head": {"damage": 1.28, "accuracy": .72, "effect": "stunned"},
     "torso": {"damage": 1.0, "accuracy": 1.0, "effect": None},
-    "arms": {"damage": .82, "accuracy": .91, "effect": "weakened"},
-    "legs": {"damage": .78, "accuracy": .90, "effect": "slowed"},
+    "arms": {"damage": .84, "accuracy": .90, "effect": "weakened"},
+    "legs": {"damage": .80, "accuracy": .90, "effect": "slowed"},
 }
 
 
@@ -24,56 +21,77 @@ class CombatResult:
     made_tangible: bool = False
 
 
-def resolve_attack(attacker, defender, action, attacker_state, defender_state, rng=None):
-    """Resolve propriedades do ataque sem exceções baseadas no nome do atacante."""
-    rng = rng or Random()
-    intensity = INTENSITY.get(action.get("intensity"), INTENSITY["balanced"])
-    body = BODY_PARTS.get(action.get("body_part"), BODY_PARTS["torso"])
-    use_haki = action.get("use_haki", False)
-    element = action.get("element") or attacker["game"].get("element")
-    energy_cost = intensity["energy"] + (22 if use_haki else 0)
-    if attacker_state["energy"] < energy_cost:
-        return CombatResult(0, 0, False, "Energia insuficiente para executar essa ação.")
-    if use_haki and "armament" not in attacker.get("haki", []):
-        return CombatResult(0, 0, False, f"{attacker['name']} não domina Haki do Armamento.")
+def initiative_actions(speed, meter):
+    """Todos agem uma vez; o excedente acumulado concede ações extras."""
+    meter += speed
+    extra = 0
+    while meter >= 180:
+        extra += 1
+        meter -= 100
+    return 1 + extra, meter
 
-    made_tangible = element in defender.get("weaknesses", [])
+
+def resolve_action(attacker, defender, command, attacker_state, defender_state, rng=None, bonus_scale=1.0):
+    rng = rng or Random()
+    skill = get_skill(command.get("skill", "basic"))
+    body = BODY_PARTS.get(command.get("body_part"), BODY_PARTS["torso"])
+    use_haki = command.get("use_haki", False)
+    damage_type = skill.get("damage_type", attacker.get("damage_type", "physical"))
+    energy_cost = skill["energy"] + (18 if use_haki else 0)
+
+    if attacker_state["energy"] < energy_cost:
+        return CombatResult(0, 0, False, "não tinha energia para completar a ação")
+    if attacker_state.get("silenced") and skill != get_skill("basic"):
+        return CombatResult(0, 0, False, "teve a habilidade bloqueada pela escuridão")
+    if use_haki and "armament" not in attacker.get("haki", []):
+        return CombatResult(0, 0, False, "não domina Haki do Armamento")
+    if attacker_state.get("cooldowns", {}).get(command.get("skill"), 0) > 0:
+        return CombatResult(0, 0, False, "tentou usar uma habilidade ainda em recarga")
+
+    made_tangible = damage_type in defender.get("weaknesses", [])
+    if damage_type in defender.get("immunities", []):
+        return CombatResult(0, energy_cost, False, f"não causou dano: {defender['name']} é imune a {damage_type}")
     if defender.get("fruit_type") == "logia" and not defender_state.get("tangible") and not use_haki and not made_tangible:
-        return CombatResult(0, energy_cost, False, f"O ataque atravessou {defender['name']}. Uma Logia exige Haki do Armamento ou uma fraqueza compatível.")
+        return CombatResult(0, energy_cost, False, "não atingiu o corpo real da Logia")
     if made_tangible:
         defender_state["tangible"] = 2
 
-    defender_speed = defender["game"]["speed"] * (.78 if "slowed" in defender_state.get("statuses", []) else 1)
-    accuracy = intensity["accuracy"] * body["accuracy"] + (attacker["game"]["speed"] - defender_speed) / 450
-    if action.get("approach") == "feint":
-        accuracy += attacker["game"]["technique"] / 800
-    if rng.random() > max(.22, min(.97, accuracy)):
-        return CombatResult(0, energy_cost, False, f"{defender['name']} leu a aproximação e evitou o golpe.", made_tangible=made_tangible)
+    attack_strength = attacker["game"]["strength"]
+    attack_technique = attacker["game"]["technique"]
+    if attacker.get("passive") == "gear_five" and attacker_state["hp"] <= attacker["game"]["hp"] * .2:
+        attack_strength *= 1.5
+        attack_technique *= 1.5
 
-    attack_power = attacker["game"]["strength"] * .62 + attacker["game"]["technique"] * .38
-    base = max(12, attack_power * 1.75 - defender["game"]["defense"])
-    modifier = intensity["damage"] * body["damage"]
-    if use_haki:
-        modifier *= 1 + attacker["game"]["haki_level"] * .11
-    if made_tangible:
-        modifier *= 1.18
-    if action.get("stance") == "aggressive":
-        modifier *= 1.12
-    damage = max(1, round(base * modifier * rng.uniform(.92, 1.08)))
-    status = body["effect"] if body["effect"] and rng.random() < .22 + attacker["game"]["technique"] / 500 else None
-    return CombatResult(damage, energy_cost, True, "Ataque conectado com sucesso.", status, made_tangible)
+    target_speed = defender["game"]["speed"] * (.80 if "slowed" in defender_state.get("statuses", []) else 1)
+    accuracy = .82 * body["accuracy"] + (attacker["game"]["speed"] - target_speed) / 500
+    if command.get("approach") == "feint": accuracy += attack_technique / 850
+    if rng.random() > max(.30, min(.98, accuracy)):
+        return CombatResult(0, energy_cost, False, "errou após o alvo antecipar a trajetória", made_tangible=made_tangible)
+
+    mitigation = .68 * (1 - skill.get("ignore_defense", 0))
+    stance_factor = 1.15 if defender_state.get("stance") == "guarded" else (.88 if defender_state.get("stance") == "aggressive" else 1)
+    defense = defender["game"]["defense"] * stance_factor * (0.78 if "guard_break" in defender_state.get("statuses", []) else 1)
+    raw = attack_strength * skill["power"] * 2.15 - defense * mitigation
+    critical_chance = max(.04, (attack_technique - 65) / 260)
+    critical = rng.random() < critical_chance
+    modifier = body["damage"] * bonus_scale * (1.5 if critical else 1)
+    if use_haki: modifier *= 1 + len(attacker.get("haki", [])) * .06
+    if made_tangible: modifier *= 1.15
+    if defender.get("passive") == "double_damage_taken": modifier *= 2
+    damage = max(1, round(raw * modifier * rng.uniform(.94, 1.06)))
+
+    effect = skill.get("effect") or (body["effect"] if rng.random() < attack_technique / 330 else None)
+    if defender.get("passive") == "exoskeleton": damage = round(damage * .85)
+    if defender.get("passive") == "regeneration": damage = round(damage * .82)
+    message = f"usou {skill['name']} e causou {damage} de dano"
+    if critical: message += " (CRÍTICO)"
+    return CombatResult(damage, energy_cost, True, message, effect, made_tangible)
 
 
-def resolve_enemy_attack(enemy, target, enemy_state, target_state, rng=None):
-    rng = rng or Random()
-    if "stunned" in enemy_state.get("statuses", []):
-        enemy_state["statuses"].remove("stunned")
-        return 0, f"{enemy['name']} perdeu o turno após ser atordoado."
-    multiplier = 1.25 if enemy_state["hp"] < enemy["game"]["hp"] * .35 else rng.uniform(.82, 1.08)
-    base = max(16, enemy["game"]["strength"] * 1.45 - target["game"]["defense"] * .68)
-    if target_state.get("stance") == "guarded":
-        base *= .74
-    elif target_state.get("stance") == "aggressive":
-        base *= 1.18
-    damage = round(base * multiplier)
-    return damage, f"{enemy['name']} contra-atacou e causou {damage} de dano em {target['name']}."
+def tick_state(state):
+    for skill, turns in list(state.get("cooldowns", {}).items()):
+        state["cooldowns"][skill] = max(0, turns - 1)
+    state["silenced"] = max(0, state.get("silenced", 0) - 1)
+    if state.get("tangible"): state["tangible"] -= 1
+    if "burn" in state.get("statuses", []): state["hp"] = max(0, state["hp"] - 24)
+    if "bleed" in state.get("statuses", []): state["hp"] = max(0, state["hp"] - 18)
