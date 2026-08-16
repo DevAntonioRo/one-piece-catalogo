@@ -8,7 +8,7 @@ Wiki interativa inspirada no universo de **One Piece**, integrada ao minigame t�
 
 ### Wiki
 
-- 33 arquivos de personagens, incluindo 30 do elenco solicitado
+- 33 personagens cadastrados
 - Busca por nome ou alcunha
 - Filtro e página de tripulações
 - Akuma no Mi, tipo, Haki, origem e recompensa
@@ -38,10 +38,59 @@ O jogador planeja uma ação separada para cada integrante. Todas as ordens entr
 - cooldown de habilidades;
 - postura defensiva ou agressiva;
 - atordoamento, enfraquecimento e redução de velocidade;
-- imunidades por tipo de dano, como Buggy contra cortes;
+- imunidades por tipo de dano, como Buggy contra cortes e Crocodile contra golpes normais sem Haki ou recursos capazes de atingir seu corpo;
 - passivas, cura, controle e sinergias de facção.
 
 Exemplos: um ataque comum de Zoro causa zero de dano em Crocodile sem Haki; qualquer corte causa zero de dano em Buggy; ROOM ignora a defesa; Vórtice Sombrio bloqueia habilidades; e Gear 5 fortalece Luffy em situação crítica.
+
+## Próximos passos
+
+O desenvolvimento continuará dividido entre a expansão da wiki, o aprofundamento do RPG e a evolução técnica da aplicação.
+
+### Wiki e universo
+
+- Adicionar novos personagens, tripulações, organizações e ilhas.
+- Separar piratas, marinheiros, revolucionários e outras facções.
+- Expandir a lore com histórias, relações, habilidades e acontecimentos importantes.
+- Criar páginas específicas para Akuma no Mi, tipos de Haki e localizações.
+- Adicionar recompensas para marinheiros com base no sistema da Cross Guild.
+- Classificar personagens como jogáveis, desbloqueáveis, chefes ou exclusivos da wiki.
+
+### Grand Line Tower
+
+- Adicionar novos ataques, passivas, transformações e despertares.
+- Ampliar a variedade de itens e recursos táticos.
+- Criar novos andares, chefes e desafios especiais.
+- Implementar níveis de dificuldade.
+- Melhorar a inteligência e a tomada de decisões dos inimigos.
+- Adicionar modos de sobrevivência, treinamento e batalha contra chefes.
+- Criar um sistema de desbloqueio e evolução de personagens.
+- Permitir estratégias mais detalhadas para cada ação de combate.
+
+### Progressão
+
+- Salvar equipes, berries, habilidades e progresso do jogador.
+- Criar perfis de jogador e histórico de partidas.
+- Adicionar conquistas e desafios opcionais.
+- Implementar uma loja com habilidades, itens e melhorias permanentes.
+
+### Evolução técnica
+
+- Substituir os dados estáticos por um banco de dados relacional.
+- Utilizar SQLAlchemy para persistência dos dados.
+- Expandir os testes automatizados do motor e das rotas Flask.
+- Documentar os endpoints da API.
+- Adicionar validação de dados, tratamento de erros e logs.
+- Configurar testes automáticos com GitHub Actions.
+- Preparar a aplicação para publicação online.
+
+### Interface
+
+- Melhorar a experiência de planejamento das ações.
+- Criar indicadores visuais para energia, cooldown e efeitos de status.
+- Adicionar animações e feedback visual durante o combate.
+- Aprimorar a responsividade para dispositivos móveis.
+- Implementar melhorias de acessibilidade.
 
 ## Estrutura
 
